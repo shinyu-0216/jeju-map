@@ -839,7 +839,7 @@ const group=L.layerGroup().addTo(map);
 function polyStyle(f){
   const jeju=f.properties.sgg==='제주시';
   const on=S.sel===f.properties.name;
-  return {color:on?cv('--nu'):cv('--edge'),weight:on?3:(f.properties.kind==='읍면'?1.6:1),fill:true,fillColor:'#000',fillOpacity:0,opacity:.9};
+  return {color:on?cv('--nu'):cv('--edge'),weight:on?3:(f.properties.kind==='읍면'?1.12:.7),fill:true,fillColor:'#000',fillOpacity:0,opacity:.9};
 }
 DATA.bound.features.forEach(f=>{
   const p=f.properties;
