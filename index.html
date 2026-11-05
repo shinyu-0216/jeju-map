@@ -777,6 +777,11 @@ svg text{fill:var(--mute);font-size:9px;font-family:var(--font);font-variant-num
           <span><i style="background:var(--ur)"></i>시가화</span>
           <span><i style="background:var(--xx)"></i>미분류</span>
         </div>
+        <div class="leg" style="margin-top:6px"><span style="color:var(--ink)">점 크기(대지면적)</span>
+          <span><i style="background:var(--mute);width:5px;height:5px"></i>1만㎡ 이하</span>
+          <span><i style="background:var(--mute);width:10px;height:10px"></i>2만㎡ 이하</span>
+          <span><i style="background:var(--mute);width:15px;height:15px"></i>3만㎡ 이하·초과</span>
+        </div>
       </section>
       <section class="card">
         <p class="cov" id="cov"></p>
@@ -836,10 +841,13 @@ function popup(p){
   return `<b>${p[6]}</b><span class="pill" style="background:${colorOf(c)}">${NAME[c]}</span><br>`+
    `사용승인 ${p[2]}년<br>용도지역 ${p[5]}<br>대지 ${fmt(p[7])}㎡ · 연면적 ${fmt(p[8])}㎡`;
 }
-function radius(cur){
+// 점 크기(기준=이전 3만㎡ 이하 크기): 1만㎡ 이하 ×0.5 · 2만㎡ 이하 ×1.0 · 3만㎡ 이하(및 초과) ×1.5
+function sizeK(p){const a=p[7];return a<=10000?.5:a<=20000?1:1.5}
+function radius(cur,p){
   const z=map.getZoom();
-  const b=Math.max(2,Math.min(7,(z-7.5)*.9))*.7;   // 점 크기 30% 축소
-  return cur?(S.mode==='cum'?b+1.3:b+.7):b;
+  const b=Math.max(2,Math.min(7,(z-7.5)*.9))*.7;
+  const r=cur?(S.mode==='cum'?b+1.3:b+.7):b;
+  return Math.max(1.1,r*sizeK(p));
 }
 function draw(){
   group.clearLayers();
@@ -848,7 +856,7 @@ function draw(){
   const list=pts().filter(visible).sort((a,b)=>a[2]-b[2]);
   for(const p of list){
     const cur=p[2]===S.year, c=cls(p), hi=cur&&S.mode==='cum';
-    const m=L.circleMarker([p[1],p[0]],{radius:radius(cur),
+    const m=L.circleMarker([p[1],p[0]],{radius:radius(cur,p),
       color:hi?ring:colorOf(c),weight:hi?1.4:.6,fillColor:colorOf(c),fillOpacity:cur?.95:.62});
     m.options.bubblingMouseEvents=false;m.bindPopup(()=>popup(p));
     group.addLayer(m);
