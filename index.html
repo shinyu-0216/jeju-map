@@ -835,7 +835,8 @@ DATA.bound.features.forEach(f=>{
 function setZoomClass(){mapEl.classList.toggle('z-low',map.getZoom()<11)}
 
 const dongOf=p=>p[6].split(' ')[1];   // 주소의 법정동(읍면은 읍면 이름)
-function pts(){return ALL.filter(p=>(S.area==='all'||p[9]===S.area)&&(!S.sel||p[10]===S.sel)&&(!S.sub||dongOf(p)===S.sub))}
+// 법정동을 고르면 주소가 그 법정동인 필지를 모두(경계 밖에 찍힌 점 포함) 집계한다.
+function pts(){return ALL.filter(p=>(S.area==='all'||p[9]===S.area)&&(S.sub?dongOf(p)===S.sub:(!S.sel||p[10]===S.sel)))}
 function cls(p){return S.basis==='low'?p[3]:p[4]}
 function visible(p){return S.mode==='cum'?p[2]<=S.year:p[2]===S.year}
 // ── 읍면동 선택: 드롭다운 + 검색. 지도의 경계는 행정동 기준이라, 법정동(예: 호근동)은 소속 행정동과 함께 보여 준다.
@@ -850,7 +851,7 @@ function buildLists(){
   const pairs=[];
   Object.keys(cnt).forEach(d=>{
     const e=Object.entries(cnt[d]).sort((a,b)=>b[1]-a[1]);
-    e.forEach(([poly,n],i)=>{if(i===0||n>=3){if(d!==poly){(subs[poly]=subs[poly]||[]).push(d);pairs.push([d,poly])}}});
+    e.forEach(([poly,n],i)=>{if(i===0&&d!==poly){(subs[poly]=subs[poly]||[]).push(d);pairs.push([d,poly])}});
   });
   const kr=(a,b)=>a.localeCompare(b,'ko');
   const mk=f=>{const n=f.properties.name,s=(subs[n]||[]).sort(kr).map(x=>x.replace(/동$/,'')).join('·');return {n,label:s?n+' ('+s+')':n}};
