@@ -839,7 +839,7 @@ const group=L.layerGroup().addTo(map);
 function polyStyle(f){
   const jeju=f.properties.sgg==='제주시';
   const on=S.sel===f.properties.name;
-  return {color:on?cv('--nu'):cv('--edge'),weight:on?3:(f.properties.kind==='읍면'?.78:.5),fill:true,fillColor:'#000',fillOpacity:0,opacity:1};
+  return {color:on?cv('--nu'):cv('--edge'),weight:on?3:(f.properties.kind==='읍면'?.78:.5),fill:true,fillColor:'#000',fillOpacity:0,opacity:on?1:.5};
 }
 DATA.bound.features.forEach(f=>{
   const p=f.properties;
@@ -847,9 +847,6 @@ DATA.bound.features.forEach(f=>{
   m.bindTooltip(p.name,{permanent:true,direction:'center',className:'lbl '+(p.kind==='동'?'dong':'big'),opacity:1});
   labels.addLayer(m);
 });
-const hl=L.circleMarker([33.3617,126.5292],{radius:0,opacity:0,fillOpacity:0,interactive:false});
-hl.bindTooltip('▲ 한라산 1,947m',{permanent:true,direction:'bottom',offset:[0,4],className:'lbl big summit',opacity:1});
-labels.addLayer(hl);
 function setZoomClass(){mapEl.classList.toggle('z-low',map.getZoom()<11);mapEl.classList.toggle('z-xlow',map.getZoom()<10)}
 
 const dongOf=p=>p[6].split(' ')[1];   // 주소의 법정동(읍면은 읍면 이름)
